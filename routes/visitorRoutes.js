@@ -37,7 +37,7 @@
 const express = require('express');
 const router = express.Router();
 const { auth, authorize } = require('../middleware/auth');
-const visitorController = require('../Controllers/visitorController');
+const visitorController = require('../controllers/visitorController');
 
 router.post('/', auth, authorize('admin'), visitorController.addVisitor);
 router.put('/:id', auth, authorize('admin'), visitorController.editVisitor);

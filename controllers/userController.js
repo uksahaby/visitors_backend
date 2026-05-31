@@ -119,9 +119,15 @@ const multer = require('multer');
 const path = require('path');
 
 // Configure multer for file uploads
+const fs = require('fs');
+const uploadDir = path.join(__dirname, '..', 'Uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/');
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname));
@@ -158,14 +164,13 @@ const getUsernameFromReq = async (req) => {
 
 // Helper function to format user response
 const formatUserResponse = (user) => {
-  const serverBase = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 3000}`;
   return {
     id: user.id,
     username: user.username,
     phone: user.phone,
     role: user.role,
     active: user.active,
-    image: user.image ? `${serverBase}/uploads/${user.image}` : null,
+    image: user.image || null,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
     createdBy: user.createdBy,

@@ -52,7 +52,6 @@ const getUsernameFromReq = async (req) => {
 
 // Helper function to format visitor response
 const formatVisitorResponse = (visitor) => {
-  const serverBase = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 3000}`;
   return {
     id: visitor.id,
     _id: visitor.id,
@@ -63,7 +62,7 @@ const formatVisitorResponse = (visitor) => {
     verified: visitor.verified,
     checkInTime: visitor.checkInTime,
     checkOutTime: visitor.checkOutTime,
-    image: visitor.image ? `${serverBase}/uploads/${visitor.image}` : null,
+    image: visitor.image || null,
     qrCode: visitor.qrCode,
     createdAt: visitor.createdAt,
     updatedAt: visitor.updatedAt,

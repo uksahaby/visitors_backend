@@ -87,7 +87,7 @@ app.get('/api/config/version', (req, res) => {
   const serverBase = process.env.SERVER_URL || `${protocol}://${host}`;
   res.json({
     latestVersion: process.env.APP_VERSION || '1.0.1',
-    downloadUrl: process.env.APP_DOWNLOAD_URL || `${serverBase}/uploads/app-release.apk`,
+    downloadUrl: process.env.APP_DOWNLOAD_URL || `${serverBase}/uploads/baqi_app.msix`,
     forceUpdate: process.env.APP_FORCE_UPDATE === 'true',
     releaseNotes: process.env.APP_RELEASE_NOTES || 'Performance improvements, user profile photo support, and critical bug fixes.'
   });

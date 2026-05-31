@@ -82,7 +82,9 @@ app.use('/api/audit-logs', auditRoutes);
 
 // App version check endpoint (configured dynamically via env variables)
 app.get('/api/config/version', (req, res) => {
-  const serverBase = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 3000}`;
+  const host = req.get('host');
+  const protocol = host.includes('onrender.com') ? 'https' : req.protocol;
+  const serverBase = process.env.SERVER_URL || `${protocol}://${host}`;
   res.json({
     latestVersion: process.env.APP_VERSION || '1.0.1',
     downloadUrl: process.env.APP_DOWNLOAD_URL || `${serverBase}/uploads/app-release.apk`,

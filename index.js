@@ -80,6 +80,17 @@ app.use('/api/events', eventRoutes);
 app.use('/api/visitors', visitorRoutes);
 app.use('/api/audit-logs', auditRoutes);
 
+// App version check endpoint (configured dynamically via env variables)
+app.get('/api/config/version', (req, res) => {
+  const serverBase = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 3000}`;
+  res.json({
+    latestVersion: process.env.APP_VERSION || '1.0.1',
+    downloadUrl: process.env.APP_DOWNLOAD_URL || `${serverBase}/uploads/app-release.apk`,
+    forceUpdate: process.env.APP_FORCE_UPDATE === 'true',
+    releaseNotes: process.env.APP_RELEASE_NOTES || 'Performance improvements, user profile photo support, and critical bug fixes.'
+  });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Server error:', err);

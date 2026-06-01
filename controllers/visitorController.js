@@ -155,30 +155,38 @@ exports.addVisitor = [
 ];
 
 // Edit visitor (admin only)
-exports.editVisitor = async (req, res) => {
-  const { name, phone, address } = req.body;
+exports.editVisitor = [
+  upload.single('image'),
+  async (req, res) => {
+    const { name, phone, address } = req.body;
 
-  try {
-    const visitor = await Visitor.findByPk(req.params.id);
-    if (!visitor) {
-      return res.status(404).json({ msg: 'Visitor not found' });
+    try {
+      const visitor = await Visitor.findByPk(req.params.id);
+      if (!visitor) {
+        return res.status(404).json({ msg: 'Visitor not found' });
+      }
+
+      if (name) visitor.name = name;
+      if (phone) visitor.phone = phone;
+      if (address) visitor.address = address;
+      if (req.file) visitor.image = req.file.filename;
+
+      await visitor.save();
+      
+      const operator = await getUsernameFromReq(req);
+      await logAction(req, 'VISITOR_UPDATE', operator, 'SUCCESS', {
+        visitorId: visitor.id,
+        name: visitor.name,
+      });
+      
+      // Return formatted response
+      res.json(formatVisitorResponse(visitor));
+    } catch (err) {
+      console.error('Edit visitor error:', err);
+      res.status(500).json({ msg: 'Server error' });
     }
-
-    await visitor.update({ name, phone, address });
-    
-    const operator = await getUsernameFromReq(req);
-    await logAction(req, 'VISITOR_UPDATE', operator, 'SUCCESS', {
-      visitorId: visitor.id,
-      name: visitor.name,
-    });
-    
-    // Return formatted response
-    res.json(formatVisitorResponse(visitor));
-  } catch (err) {
-    console.error('Edit visitor error:', err);
-    res.status(500).json({ msg: 'Server error' });
   }
-};
+];
 
 // Delete visitor (admin only)
 exports.deleteVisitor = async (req, res) => {
